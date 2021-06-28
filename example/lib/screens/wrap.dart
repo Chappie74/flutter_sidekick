@@ -6,7 +6,7 @@ class Item {
   Item({
     this.id,
   });
-  final int id;
+  final int? id;
 }
 
 class WrapExample extends StatelessWidget {
@@ -15,8 +15,8 @@ class WrapExample extends StatelessWidget {
     this.targetList,
   });
 
-  final List<Item> sourceList;
-  final List<Item> targetList;
+  final List<Item>? sourceList;
+  final List<Item>? targetList;
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +51,13 @@ class WrapExample extends StatelessWidget {
                   children: <Widget>[
                     CircleButton(
                       text: '>',
-                      onPressed: () => SidekickTeamBuilder.of<Item>(context)
+                      onPressed: () => SidekickTeamBuilder.of<Item>(context)!
                           .moveAll(SidekickFlightDirection.toTarget),
                     ),
                     SizedBox(width: 60.0, height: 60.0),
                     CircleButton(
                       text: '<',
-                      onPressed: () => SidekickTeamBuilder.of<Item>(context)
+                      onPressed: () => SidekickTeamBuilder.of<Item>(context)!
                           .moveAll(SidekickFlightDirection.toSource),
                     ),
                   ],
@@ -98,13 +98,13 @@ class WrapItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => SidekickTeamBuilder.of<Item>(context).move(item),
+      onTap: () => SidekickTeamBuilder.of<Item>(context)!.move(item),
       child: Padding(
         padding: const EdgeInsets.all(2.0),
         child: Container(
           height: size - 4,
           width: size - 4,
-          color: _getColor(item.id),
+          color: _getColor(item.id!),
         ),
       ),
     );

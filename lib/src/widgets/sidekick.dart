@@ -41,8 +41,8 @@ enum SidekickFlightDirection {
 
 // The bounding box for context in global coordinates.
 Rect _globalBoundingBoxFor(BuildContext context) {
-  final RenderBox box = context.findRenderObject();
-  assert(box != null && box.hasSize);
+  final RenderBox box = context.findRenderObject() as RenderBox;
+  assert(box.hasSize);
   return MatrixUtils.transformRect(
       box.getTransformTo(null), Offset.zero & box.size);
 }
@@ -77,17 +77,15 @@ Rect _globalBoundingBoxFor(BuildContext context) {
 /// instead once the transition has taken flight.
 class Sidekick extends StatefulWidget {
   const Sidekick({
-    Key key,
-    @required this.tag,
+    Key? key,
+    required this.tag,
     this.targetTag,
     this.createRectTween,
     this.flightShuttleBuilder,
     this.placeholderBuilder,
-    SidekickAnimationBuilder animationBuilder,
-    @required this.child,
-  })  : assert(tag != null),
-        assert(child != null),
-        animationBuilder = animationBuilder ?? _sameAnimation,
+    SidekickAnimationBuilder? animationBuilder,
+    required this.child,
+  })  : animationBuilder = animationBuilder ?? _sameAnimation,
         super(key: key);
 
   /// The identifier for this particular sidekick.
@@ -96,7 +94,7 @@ class Sidekick extends StatefulWidget {
   /// The identifier of the target.
   ///
   /// If [null] that means this sidekick is only the target of another sidekick.
-  final Object targetTag;
+  final Object? targetTag;
 
   /// Defines how the destination sidekick's bounds change as it flies from the starting
   /// position to the destination position.
@@ -109,7 +107,7 @@ class Sidekick extends StatefulWidget {
   /// If this property is null, the default, then the value of
   /// [SidekickController.createRectTween] is used. The [SidekickController] created by
   /// [MaterialApp] creates a [MaterialRectAreTween].
-  final CreateRectTween createRectTween;
+  final CreateRectTween? createRectTween;
 
   /// The widget subtree that will "fly" from one the initial position to another.
   ///
@@ -126,27 +124,25 @@ class Sidekick extends StatefulWidget {
   ///
   /// If none is provided, the destination Sidekick child is shown in-flight
   /// by default.
-  final SidekickFlightShuttleBuilder flightShuttleBuilder;
+  final SidekickFlightShuttleBuilder? flightShuttleBuilder;
 
   /// Placeholder widget left in place as the Sidekicks's child once the flight takes off.
   ///
   /// By default, an empty SizedBox keeping the Sidekick child's original size is
   /// left in place once the Sidekick shuttle has taken flight.
-  final TransitionBuilder placeholderBuilder;
+  final TransitionBuilder? placeholderBuilder;
 
   /// Optional override to specified the animation used while flying.
   final SidekickAnimationBuilder animationBuilder;
 
   // Returns a map of all of the sidekicks in context, indexed by sidekick tag.
   static Map<Object, _SidekickState> _allSidekicksFor(BuildContext context) {
-    assert(context != null);
     final Map<Object, _SidekickState> result = <Object, _SidekickState>{};
     void visitor(Element element) {
       if (element.widget is Sidekick) {
-        final StatefulElement sidekick = element;
-        final Sidekick sidekickWidget = element.widget;
+        final StatefulElement sidekick = element as StatefulElement;
+        final Sidekick sidekickWidget = element.widget as Sidekick;
         final Object tag = sidekickWidget.tag;
-        assert(tag != null);
         assert(() {
           if (result.containsKey(tag)) {
             throw FlutterError(
@@ -159,7 +155,7 @@ class Sidekick extends StatefulWidget {
           }
           return true;
         }());
-        final _SidekickState sidekickState = sidekick.state;
+        final _SidekickState sidekickState = sidekick.state as _SidekickState;
         result[tag] = sidekickState;
       }
       element.visitChildren(visitor);
@@ -181,14 +177,14 @@ class Sidekick extends StatefulWidget {
 
 class _SidekickState extends State<Sidekick> with TickerProviderStateMixin {
   final GlobalKey _key = GlobalKey();
-  Size _placeholderSize;
+  Size? _placeholderSize;
 
   void startFlight() {
     assert(mounted);
-    final RenderBox box = context.findRenderObject();
+    final RenderBox? box = context.findRenderObject() as RenderBox?;
     assert(box != null && box.hasSize);
     setState(() {
-      _placeholderSize = box.size;
+      _placeholderSize = box!.size;
     });
   }
 
@@ -205,11 +201,11 @@ class _SidekickState extends State<Sidekick> with TickerProviderStateMixin {
     if (_placeholderSize != null) {
       if (widget.placeholderBuilder == null) {
         return SizedBox(
-          width: _placeholderSize.width,
-          height: _placeholderSize.height,
+          width: _placeholderSize!.width,
+          height: _placeholderSize!.height,
         );
       } else {
-        return widget.placeholderBuilder(context, widget.child);
+        return widget.placeholderBuilder!(context, widget.child);
       }
     }
     return KeyedSubtree(
@@ -222,34 +218,34 @@ class _SidekickState extends State<Sidekick> with TickerProviderStateMixin {
 /// Everything known about a sidekick flight that's to be started or diverted.
 class _SidekickFlightManifest {
   _SidekickFlightManifest({
-    @required this.type,
-    @required this.overlay,
-    @required this.rect,
-    @required this.fromSidekick,
-    @required this.toSidekick,
-    @required this.createRectTween,
-    @required this.shuttleBuilder,
-    @required this.animationController,
+    required this.type,
+    required this.overlay,
+    required this.rect,
+    required this.fromSidekick,
+    required this.toSidekick,
+    required this.createRectTween,
+    required this.shuttleBuilder,
+    required this.animationController,
   }) : assert((type == SidekickFlightDirection.toTarget &&
-                fromSidekick.widget.targetTag == toSidekick.widget.tag) ||
+                fromSidekick!.widget.targetTag == toSidekick!.widget.tag) ||
             (type == SidekickFlightDirection.toSource &&
-                toSidekick.widget.targetTag == fromSidekick.widget.tag));
+                toSidekick!.widget.targetTag == fromSidekick!.widget.tag));
 
   final SidekickFlightDirection type;
-  final OverlayState overlay;
+  final OverlayState? overlay;
   final Rect rect;
-  final _SidekickState fromSidekick;
-  final _SidekickState toSidekick;
-  final CreateRectTween createRectTween;
+  final _SidekickState? fromSidekick;
+  final _SidekickState? toSidekick;
+  final CreateRectTween? createRectTween;
   final SidekickFlightShuttleBuilder shuttleBuilder;
   final Animation<double> animationController;
 
-  Object get tag => fromSidekick.widget.tag;
+  Object get tag => fromSidekick!.widget.tag;
 
-  Object get targetTag => toSidekick.widget.tag;
+  Object get targetTag => toSidekick!.widget.tag;
 
   Animation<double> get animation {
-    return fromSidekick.widget.animationBuilder(animationController);
+    return fromSidekick!.widget.animationBuilder(animationController);
   }
 
   @override
@@ -267,18 +263,19 @@ class _SidekickFlight {
 
   final _OnFlightEnded onFlightEnded;
 
-  Tween<Rect> sidekickRectTween;
-  Widget shuttle;
+  late Tween<Rect?> sidekickRectTween;
+  Widget? shuttle;
 
   Animation<double> _sidekickOpacity = kAlwaysCompleteAnimation;
-  ProxyAnimation _proxyAnimation;
-  _SidekickFlightManifest manifest;
-  OverlayEntry overlayEntry;
+  late ProxyAnimation _proxyAnimation;
+  _SidekickFlightManifest? manifest;
+  OverlayEntry? overlayEntry;
   bool _aborted = false;
 
-  Tween<Rect> _doCreateRectTween(Rect begin, Rect end) {
-    final CreateRectTween createRectTween =
-        manifest.toSidekick.widget.createRectTween ?? manifest.createRectTween;
+  Tween<Rect?> _doCreateRectTween(Rect? begin, Rect? end) {
+    final CreateRectTween? createRectTween =
+        manifest!.toSidekick!.widget.createRectTween ??
+            manifest!.createRectTween;
     if (createRectTween != null) return createRectTween(begin, end);
     return RectTween(begin: begin, end: end);
   }
@@ -289,21 +286,21 @@ class _SidekickFlight {
   // The OverlayEntry WidgetBuilder callback for the sidekick's overlay.
   Widget _buildOverlay(BuildContext context) {
     assert(manifest != null);
-    shuttle ??= manifest.shuttleBuilder(
+    shuttle ??= manifest!.shuttleBuilder(
       context,
-      manifest.animation,
-      manifest.type,
-      manifest.fromSidekick.context,
-      manifest.toSidekick.context,
+      manifest!.animation,
+      manifest!.type,
+      manifest!.fromSidekick!.context,
+      manifest!.toSidekick!.context,
     );
     assert(shuttle != null);
 
     return AnimatedBuilder(
       animation: _proxyAnimation,
       child: shuttle,
-      builder: (BuildContext context, Widget child) {
-        final RenderBox toSidekickBox =
-            manifest.toSidekick.context?.findRenderObject();
+      builder: (BuildContext context, Widget? child) {
+        final RenderBox? toSidekickBox =
+            manifest!.toSidekick!.context.findRenderObject() as RenderBox?;
         if (_aborted || toSidekickBox == null || !toSidekickBox.attached) {
           // The toSidekick no longer exists or it's no longer the flight's destination.
           // Continue flying while fading out.
@@ -318,16 +315,16 @@ class _SidekickFlight {
           // supposed to end up then recreate the sidekickRect tween.
           final Offset toSidekickOrigin =
               toSidekickBox.localToGlobal(Offset.zero);
-          if (toSidekickOrigin != sidekickRectTween.end.topLeft) {
+          if (toSidekickOrigin != sidekickRectTween.end!.topLeft) {
             final Rect sidekickRectEnd =
-                toSidekickOrigin & sidekickRectTween.end.size;
+                toSidekickOrigin & sidekickRectTween.end!.size;
             sidekickRectTween =
                 _doCreateRectTween(sidekickRectTween.begin, sidekickRectEnd);
           }
         }
 
-        final Rect rect = sidekickRectTween.evaluate(_proxyAnimation);
-        final Size size = manifest.rect.size;
+        final Rect rect = sidekickRectTween.evaluate(_proxyAnimation)!;
+        final Size size = manifest!.rect.size;
         final RelativeRect offsets = RelativeRect.fromSize(rect, size);
 
         return Positioned(
@@ -354,10 +351,10 @@ class _SidekickFlight {
       _proxyAnimation.parent = null;
 
       assert(overlayEntry != null);
-      overlayEntry.remove();
+      overlayEntry!.remove();
       overlayEntry = null;
 
-      manifest.toSidekick.endFlight();
+      manifest!.toSidekick!.endFlight();
       onFlightEnded(this);
     }
   }
@@ -367,33 +364,33 @@ class _SidekickFlight {
     assert(!_aborted);
     manifest = initialManifest;
 
-    if (manifest.type == SidekickFlightDirection.toSource)
-      _proxyAnimation.parent = ReverseAnimation(manifest.animation);
+    if (manifest!.type == SidekickFlightDirection.toSource)
+      _proxyAnimation.parent = ReverseAnimation(manifest!.animation);
     else
-      _proxyAnimation.parent = manifest.animation;
+      _proxyAnimation.parent = manifest!.animation;
 
-    manifest.fromSidekick.startFlight();
-    manifest.toSidekick.startFlight();
+    manifest!.fromSidekick!.startFlight();
+    manifest!.toSidekick!.startFlight();
 
     sidekickRectTween = _doCreateRectTween(
-      _globalBoundingBoxFor(manifest.fromSidekick.context),
-      _globalBoundingBoxFor(manifest.toSidekick.context),
+      _globalBoundingBoxFor(manifest!.fromSidekick!.context),
+      _globalBoundingBoxFor(manifest!.toSidekick!.context),
     );
 
     overlayEntry = OverlayEntry(builder: _buildOverlay);
-    manifest.overlay.insert(overlayEntry);
+    manifest!.overlay!.insert(overlayEntry!);
   }
 
   // While this flight's sidekick was in transition a new flight order occured.
   // Redirect the in-flight sidekick to the new destination.
   void divert(_SidekickFlightManifest newManifest) {
-    assert(manifest.tag == newManifest.tag);
+    assert(manifest!.tag == newManifest.tag);
 
-    if (manifest.type == SidekickFlightDirection.toTarget &&
+    if (manifest!.type == SidekickFlightDirection.toTarget &&
         newManifest.type == SidekickFlightDirection.toSource) {
       assert(newManifest.animation.status == AnimationStatus.reverse);
-      assert(manifest.fromSidekick == newManifest.toSidekick);
-      assert(manifest.toSidekick == newManifest.fromSidekick);
+      assert(manifest!.fromSidekick == newManifest.toSidekick);
+      assert(manifest!.toSidekick == newManifest.fromSidekick);
 
       // The same sidekickRect tween is used in reverse, rather than creating
       // a new sidekickRect with _doCreateRectTween(sidekickRect.end, sidekickRect.begin).
@@ -401,36 +398,35 @@ class _SidekickFlight {
       // path for swapped begin and end parameters. We want the toSource flight
       // path to be the same (in reverse) as the toTarget flight path.
       _proxyAnimation.parent = ReverseAnimation(newManifest.animation);
-      sidekickRectTween = ReverseTween<Rect>(sidekickRectTween);
-    } else if (manifest.type == SidekickFlightDirection.toSource &&
+      sidekickRectTween = ReverseTween<Rect?>(sidekickRectTween);
+    } else if (manifest!.type == SidekickFlightDirection.toSource &&
         newManifest.type == SidekickFlightDirection.toTarget) {
       assert(newManifest.animation.status == AnimationStatus.forward);
-      assert(manifest.toSidekick == newManifest.fromSidekick);
+      assert(manifest!.toSidekick == newManifest.fromSidekick);
 
       _proxyAnimation.parent = newManifest.animation.drive(
         Tween<double>(
-          begin: manifest.animation.value,
+          begin: manifest!.animation.value,
           end: 1.0,
         ),
       );
 
-      if (manifest.fromSidekick != newManifest.toSidekick) {
-        manifest.fromSidekick.endFlight();
-        newManifest.toSidekick.startFlight();
+      if (manifest!.fromSidekick != newManifest.toSidekick) {
+        manifest!.fromSidekick!.endFlight();
+        newManifest.toSidekick!.startFlight();
         sidekickRectTween = _doCreateRectTween(sidekickRectTween.end,
-            _globalBoundingBoxFor(newManifest.toSidekick.context));
+            _globalBoundingBoxFor(newManifest.toSidekick!.context));
       } else {
-        // TODO(hansmuller): Use ReverseTween here per github.com/flutter/flutter/pull/12203.
         sidekickRectTween =
             _doCreateRectTween(sidekickRectTween.end, sidekickRectTween.begin);
       }
     } else {
-      assert(manifest.fromSidekick != newManifest.fromSidekick);
-      assert(manifest.toSidekick != newManifest.toSidekick);
+      assert(manifest!.fromSidekick != newManifest.fromSidekick);
+      assert(manifest!.toSidekick != newManifest.toSidekick);
 
       sidekickRectTween = _doCreateRectTween(
           sidekickRectTween.evaluate(_proxyAnimation),
-          _globalBoundingBoxFor(newManifest.toSidekick.context));
+          _globalBoundingBoxFor(newManifest.toSidekick!.context));
       shuttle = null;
 
       if (newManifest.type == SidekickFlightDirection.toSource)
@@ -438,16 +434,16 @@ class _SidekickFlight {
       else
         _proxyAnimation.parent = newManifest.animation;
 
-      manifest.fromSidekick.endFlight();
-      manifest.toSidekick.endFlight();
+      manifest!.fromSidekick!.endFlight();
+      manifest!.toSidekick!.endFlight();
 
       // Let the sidekicks rebuild with their placeholders.
-      newManifest.fromSidekick.startFlight();
-      newManifest.toSidekick.startFlight();
+      newManifest.fromSidekick!.startFlight();
+      newManifest.toSidekick!.startFlight();
 
       // Let the transition overlay also rebuild since
       // we cleared the old shuttle.
-      overlayEntry.markNeedsBuild();
+      overlayEntry!.markNeedsBuild();
     }
 
     _aborted = false;
@@ -460,8 +456,8 @@ class _SidekickFlight {
 
   @override
   String toString() {
-    final Object tag = manifest.tag;
-    final Object targetTag = manifest.targetTag;
+    final Object tag = manifest!.tag;
+    final Object targetTag = manifest!.targetTag;
     return 'SidekickFlight(from: $tag, to: $targetTag, ${_proxyAnimation.parent})';
   }
 }
@@ -475,10 +471,8 @@ class SidekickController extends Animation<double> {
   SidekickController({
     this.createRectTween,
     Duration duration = const Duration(milliseconds: 300),
-    @required TickerProvider vsync,
-  })  : assert(vsync != null),
-        assert(duration != null),
-        _controller = AnimationController(
+    required TickerProvider vsync,
+  }) : _controller = AnimationController(
           vsync: vsync,
           duration: duration,
         );
@@ -486,36 +480,36 @@ class SidekickController extends Animation<double> {
   /// Used to create [RectTween]s that interpolate the position of sidekicks in flight.
   ///
   /// If null, the controller uses a linear [RectTween].
-  final CreateRectTween createRectTween;
+  final CreateRectTween? createRectTween;
 
-  final AnimationController _controller;
+  final AnimationController? _controller;
 
   @override
   void addListener(VoidCallback listener) {
-    _controller.addListener(listener);
+    _controller?.addListener(listener);
   }
 
   @override
   void removeListener(VoidCallback listener) {
-    _controller.removeListener(listener);
+    _controller?.removeListener(listener);
   }
 
   @override
   void addStatusListener(AnimationStatusListener listener) {
-    _controller.addStatusListener(listener);
+    _controller?.addStatusListener(listener);
   }
 
   @override
   void removeStatusListener(AnimationStatusListener listener) {
-    _controller.removeStatusListener(listener);
+    _controller?.removeStatusListener(listener);
   }
 
   /// The current status of this animation.
-  AnimationStatus get status => _controller.status;
+  AnimationStatus get status => _controller!.status;
 
   /// The current value of the animation.
   @override
-  double get value => _controller.value;
+  double get value => _controller!.value;
 
   @mustCallSuper
   void dispose() {
@@ -524,7 +518,7 @@ class SidekickController extends Animation<double> {
 
   // All of the sidekicks that are currently in the overlay and in motion.
   // Indexed by the sidekick tag.
-  final Map<Object, _SidekickFlight> _flights = <Object, _SidekickFlight>{};
+  final Map<Object?, _SidekickFlight> _flights = <Object?, _SidekickFlight>{};
 
   /// Starts the transition animations for the given [direction].
   ///
@@ -533,9 +527,8 @@ class SidekickController extends Animation<double> {
   TickerFuture move(
     BuildContext context,
     SidekickFlightDirection direction, {
-    List<Object> tags,
+    List<Object>? tags,
   }) {
-    assert(direction != null);
     if (direction == SidekickFlightDirection.toTarget) {
       return moveToTarget(context, tags: tags);
     } else {
@@ -549,18 +542,18 @@ class SidekickController extends Animation<double> {
   /// If [tags] is null, moves all the [Sidekick] to their target.
   TickerFuture moveToTarget(
     BuildContext context, {
-    List<Object> tags,
+    List<Object>? tags,
   }) {
-    _controller.reset();
+    _controller?.reset();
     if (status == AnimationStatus.forward ||
         status == AnimationStatus.completed) {
       return TickerFuture.complete();
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((Duration value) {
+    WidgetsBinding.instance!.addPostFrameCallback((Duration value) {
       _startSidekickTransition(context, SidekickFlightDirection.toTarget, tags);
     });
-    return _controller.forward();
+    return _controller!.forward();
   }
 
   /// Starts the transition animations that moves [Sidekick]s to the ones
@@ -569,48 +562,48 @@ class SidekickController extends Animation<double> {
   /// If [tags] is null, moves all the [Sidekick] to their source.
   TickerFuture moveToSource(
     BuildContext context, {
-    List<Object> tags,
+    List<Object>? tags,
   }) {
-    _controller.value = 1.0;
+    _controller?.value = 1.0;
     if (status == AnimationStatus.reverse ||
         status == AnimationStatus.dismissed) {
       return TickerFuture.complete();
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((Duration value) {
+    WidgetsBinding.instance!.addPostFrameCallback((Duration value) {
       _startSidekickTransition(context, SidekickFlightDirection.toSource, tags);
     });
-    return _controller.reverse();
+    return _controller!.reverse();
   }
 
   void _startSidekickTransition(
     BuildContext context,
     SidekickFlightDirection flightType,
-    List<Object> tags,
+    List<Object>? tags,
   ) {
     final Rect rect = _globalBoundingBoxFor(context);
 
     final Map<Object, _SidekickState> sidekicks =
         Sidekick._allSidekicksFor(context);
 
-    for (Object tag in tags ?? sidekicks.keys) {
-      final _SidekickState sidekick = sidekicks[tag];
+    for (Object? tag in tags ?? sidekicks.keys) {
+      final _SidekickState? sidekick = sidekicks[tag!];
       if (sidekick != null) {
-        Object targetTag = sidekick.widget.targetTag;
+        Object? targetTag = sidekick.widget.targetTag;
         if (flightType == SidekickFlightDirection.toSource) {
-          final Object tempTag = tag;
+          final Object? tempTag = tag;
           tag = targetTag;
           targetTag = tempTag;
         }
 
-        if (sidekicks[tag] != null) {
-          final Sidekick fromSidekick = sidekicks[tag].widget;
-          final Sidekick toSidekick = sidekicks[targetTag]?.widget;
+        if (sidekicks[tag] != null && sidekicks[targetTag] != null) {
+          final Sidekick fromSidekick = sidekicks[tag]!.widget;
+          final Sidekick? toSidekick = sidekicks[targetTag]!.widget;
 
           if (toSidekick != null) {
-            final SidekickFlightShuttleBuilder fromShuttleBuilder =
+            final SidekickFlightShuttleBuilder? fromShuttleBuilder =
                 fromSidekick.flightShuttleBuilder;
-            final SidekickFlightShuttleBuilder toShuttleBuilder =
+            final SidekickFlightShuttleBuilder? toShuttleBuilder =
                 toSidekick.flightShuttleBuilder;
 
             final _SidekickFlightManifest manifest = _SidekickFlightManifest(
@@ -623,17 +616,17 @@ class SidekickController extends Animation<double> {
               shuttleBuilder: toShuttleBuilder ??
                   fromShuttleBuilder ??
                   _defaultSidekickFlightShuttleBuilder,
-              animationController: _controller.view,
+              animationController: _controller!.view,
             );
 
             if (_flights[tag] != null) {
-              _flights[tag].divert(manifest);
+              _flights[tag]!.divert(manifest);
             } else {
               _flights[tag] = _SidekickFlight(_handleFlightEnded)
                 ..start(manifest);
             }
           } else if (_flights[tag] != null) {
-            _flights[tag].abort();
+            _flights[tag]!.abort();
           }
         }
       }
@@ -641,7 +634,7 @@ class SidekickController extends Animation<double> {
   }
 
   void _handleFlightEnded(_SidekickFlight flight) {
-    _flights.remove(flight.manifest.tag);
+    _flights.remove(flight.manifest!.tag);
   }
 
   static final SidekickFlightShuttleBuilder
@@ -652,7 +645,7 @@ class SidekickController extends Animation<double> {
     BuildContext fromSidekickContext,
     BuildContext toSidekickContext,
   ) {
-    final Sidekick toSidekick = toSidekickContext.widget;
+    final Sidekick toSidekick = toSidekickContext.widget as Sidekick;
     return toSidekick.child;
   };
 }

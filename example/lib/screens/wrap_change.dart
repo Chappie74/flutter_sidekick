@@ -7,8 +7,8 @@ class WrapChangeExample extends StatefulWidget {
 }
 
 class _WrapChangeExampleState extends State<WrapChangeExample> {
-  List<Item> _sourceList;
-  List<Item> _targetList;
+  List<Item>? _sourceList;
+  List<Item>? _targetList;
 
   void initState() {
     super.initState();
@@ -28,11 +28,11 @@ class _WrapChangeExampleState extends State<WrapChangeExample> {
         ),
         Row(
           children: <Widget>[
-            RaisedButton(
+            ElevatedButton(
               onPressed: addSourceItem,
               child: Text('add source'),
             ),
-            RaisedButton(
+            ElevatedButton(
               onPressed: addTargetItem,
               child: Text('add target'),
             ),
@@ -44,13 +44,13 @@ class _WrapChangeExampleState extends State<WrapChangeExample> {
 
   void addSourceItem() {
     setState(() {
-      _sourceList.add(Item(id: _sourceList.length));
+      _sourceList!.add(Item(id: _sourceList!.length));
     });
   }
 
   void addTargetItem() {
     setState(() {
-      _targetList.add(Item(id: _targetList.length * 1000));
+      _targetList!.add(Item(id: _targetList!.length * 1000));
     });
   }
 }
