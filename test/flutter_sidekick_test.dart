@@ -20,7 +20,7 @@ class SimpleExample extends StatefulWidget {
 
 class _SimpleExampleState extends State<SimpleExample>
     with TickerProviderStateMixin {
-  SidekickController controller;
+  SidekickController? controller;
 
   @override
   void initState() {
@@ -45,7 +45,7 @@ class _SimpleExampleState extends State<SimpleExample>
           width: 100.0,
           height: 100.0,
           child: GestureDetector(
-            onTap: () => controller.moveToTarget(context),
+            onTap: () => controller!.moveToTarget(context),
             child: Card(
               margin: const EdgeInsets.all(0.0),
               child: Sidekick(
@@ -65,7 +65,7 @@ class _SimpleExampleState extends State<SimpleExample>
           width: 150.0,
           height: 150.0,
           child: GestureDetector(
-            onTap: () => controller.moveToSource(context),
+            onTap: () => controller!.moveToSource(context),
             child: Card(
               margin: const EdgeInsets.all(0.0),
               child: Sidekick(
@@ -92,8 +92,8 @@ class Item {
 class SidekickTeamBuilderExample extends StatelessWidget {
   SidekickTeamBuilderExample(
     this.teamKey, [
-    List<Item> sourceList,
-    List<Item> targetList,
+    List<Item>? sourceList,
+    List<Item>? targetList,
   ])  : sourceList = sourceList ?? List.generate(4, (i) => Item(i)),
         targetList = targetList ?? List.generate(4, (i) => Item(i + 4));
   final List<Item> sourceList;
@@ -149,14 +149,14 @@ class SidekickTeamBuilderExample extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: const Text('alltosource'),
-                    onPressed: () => SidekickTeamBuilder.of<String>(context)
+                    onPressed: () => SidekickTeamBuilder.of<String>(context)!
                         .moveAll(SidekickFlightDirection.toSource),
                   ),
-                  RaisedButton(
+                  TextButton(
                     child: const Text('alltotarget'),
-                    onPressed: () => SidekickTeamBuilder.of<String>(context)
+                    onPressed: () => SidekickTeamBuilder.of<String>(context)!
                         .moveAll(SidekickFlightDirection.toTarget),
                   ),
                 ],
@@ -375,7 +375,7 @@ void main() {
       await tester
           .pumpWidget(MaterialApp(home: SidekickTeamBuilderExample(key)));
 
-      final SidekickTeamBuilderState<Item> state = key.currentState;
+      final SidekickTeamBuilderState<Item> state = key.currentState!;
 
       expect(state.sourceList, containsAllItemsInOrder([0, 1, 2, 3]));
       expect(state.targetList, containsAllItemsInOrder([4, 5, 6, 7]));
@@ -400,7 +400,7 @@ void main() {
       await tester
           .pumpWidget(MaterialApp(home: SidekickTeamBuilderExample(key)));
 
-      final SidekickTeamBuilderState<Item> state = key.currentState;
+      final SidekickTeamBuilderState<Item> state = key.currentState!;
 
       expect(state.sourceList, containsAllItemsInOrder([0, 1, 2, 3]));
       expect(state.targetList, containsAllItemsInOrder([4, 5, 6, 7]));
@@ -427,7 +427,7 @@ void main() {
       await tester.pumpWidget(MaterialApp(
           home: SidekickTeamBuilderExample(key, sourceList, targetList)));
 
-      final SidekickTeamBuilderState<Item> state = key.currentState;
+      final SidekickTeamBuilderState<Item> state = key.currentState!;
 
       expect(state.sourceList, containsAllItemsInOrder([0, 1, 2, 3]));
       expect(state.targetList, containsAllItemsInOrder([4, 5, 6, 7]));
@@ -473,7 +473,7 @@ void main() {
       await tester.pumpWidget(MaterialApp(
           home: SidekickTeamBuilderExample(key, sourceList, targetList)));
 
-      final SidekickTeamBuilderState<Item> state = key.currentState;
+      final SidekickTeamBuilderState<Item> state = key.currentState!;
 
       expect(state.sourceList, containsAllItemsInOrder([0, 1, 2, 3]));
       expect(state.targetList, containsAllItemsInOrder([4, 5, 6, 7]));
@@ -522,7 +522,7 @@ void main() {
       await tester.pumpWidget(MaterialApp(
           home: SidekickTeamBuilderExample(key, sourceList, targetList)));
 
-      final SidekickTeamBuilderState<Item> state = key.currentState;
+      final SidekickTeamBuilderState<Item> state = key.currentState!;
 
       expect(state.sourceList, containsAllItemsInOrder([0, 1, 2, 3]));
       expect(state.targetList, containsAllItemsInOrder([4, 5, 6, 7]));
@@ -580,7 +580,7 @@ void main() {
       await tester.pumpWidget(MaterialApp(
           home: SidekickTeamBuilderExample(key, sourceList, targetList)));
 
-      final SidekickTeamBuilderState<Item> state = key.currentState;
+      final SidekickTeamBuilderState<Item> state = key.currentState!;
 
       expect(state.sourceList, containsAllItemsInOrder([0, 1, 2, 3]));
       expect(state.targetList, containsAllItemsInOrder([4, 5, 6, 7]));
@@ -638,7 +638,7 @@ void main() {
       await tester.pumpWidget(MaterialApp(
           home: SidekickTeamBuilderExample(key, sourceList, targetList)));
 
-      final SidekickTeamBuilderState<Item> state = key.currentState;
+      final SidekickTeamBuilderState<Item> state = key.currentState!;
 
       expect(state.sourceList, containsAllItemsInOrder([0, 1, 2, 3]));
       expect(state.targetList, containsAllItemsInOrder([4, 5, 6, 7]));
@@ -695,7 +695,7 @@ void main() {
       await tester.pumpWidget(MaterialApp(
           home: SidekickTeamBuilderExample(key, sourceList, targetList)));
 
-      final SidekickTeamBuilderState<Item> state = key.currentState;
+      final SidekickTeamBuilderState<Item> state = key.currentState!;
 
       expect(state.sourceList, containsAllItemsInOrder([0, 1, 2, 3]));
       expect(state.targetList, containsAllItemsInOrder([4, 5, 6, 7]));
@@ -743,7 +743,7 @@ class _ItemContainsInOrder extends Matcher {
   Description describe(Description description) =>
       description.add('contains in order(').addDescriptionOf(ids).add(')');
 
-  String _test(List<Item> item, Map matchState) {
+  String? _test(List<Item> item, Map matchState) {
     var matcherIndex = 0;
     for (var value in item) {
       if (ids[matcherIndex] == value.index) matcherIndex++;
@@ -762,5 +762,5 @@ class _ItemContainsInOrder extends Matcher {
   @override
   Description describeMismatch(item, Description mismatchDescription,
           Map matchState, bool verbose) =>
-      mismatchDescription.add(_test(item, matchState));
+      mismatchDescription.add(_test(item, matchState)!);
 }

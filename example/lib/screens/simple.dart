@@ -10,7 +10,7 @@ class SimpleExample extends StatefulWidget {
 
 class _SimpleExampleState extends State<SimpleExample>
     with TickerProviderStateMixin {
-  SidekickController controller;
+  SidekickController? controller;
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _SimpleExampleState extends State<SimpleExample>
           child: GestureDetector(
             // We trigger the animation to the target by tapping
             // on this widget.
-            onTap: () => controller.moveToTarget(context),
+            onTap: () => controller!.moveToTarget(context),
             // First Sidekick widget, called the 'source'.
             child: Sidekick(
               tag: 'source',
@@ -63,7 +63,7 @@ class _SimpleExampleState extends State<SimpleExample>
           child: GestureDetector(
             // We trigger the animation to the source by tapping
             // on this widget.
-            onTap: () => controller.moveToSource(context),
+            onTap: () => controller!.moveToSource(context),
             // The second sidekick widget, called the target.
             child: Sidekick(
               tag: 'target',

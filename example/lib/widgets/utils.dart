@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class CircleButton extends StatelessWidget {
   CircleButton({
-    @required this.text,
-    @required this.onPressed,
+    required this.text,
+    required this.onPressed,
   });
 
   final String text;

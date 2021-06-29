@@ -99,7 +99,7 @@ class BubblesExample extends StatelessWidget {
                         // trigger a move.
                         // Here we will move all the children for the target container,
                         // to the source container.
-                        onPressed: () => SidekickTeamBuilder.of<String>(context)
+                        onPressed: () => SidekickTeamBuilder.of<String>(context)!
                             .moveAll(SidekickFlightDirection.toSource),
                       ),
                       SizedBox(width: 60.0, height: 60.0),
@@ -109,7 +109,7 @@ class BubblesExample extends StatelessWidget {
                         // trigger a move.
                         // Here we will move all the children for the source container,
                         // to the target container.
-                        onPressed: () => SidekickTeamBuilder.of<String>(context)
+                        onPressed: () => SidekickTeamBuilder.of<String>(context)!
                             .moveAll(SidekickFlightDirection.toTarget),
                       ),
                     ],
@@ -203,7 +203,7 @@ class BubblesExample extends StatelessWidget {
 
 class Bubble extends StatelessWidget {
   const Bubble({
-    Key key,
+    Key? key,
     this.child,
     this.backgroundColor,
     this.foregroundColor,
@@ -211,24 +211,24 @@ class Bubble extends StatelessWidget {
     this.fontSize,
   }) : super(key: key);
 
-  final Widget child;
+  final Widget? child;
 
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
-  final Color foregroundColor;
+  final Color? foregroundColor;
 
-  final double radius;
+  final double? radius;
 
-  final double fontSize;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     TextStyle textStyle =
-        theme.primaryTextTheme.subhead.copyWith(color: foregroundColor);
-    Color effectiveBackgroundColor = backgroundColor;
+        theme.primaryTextTheme.subtitle1!.copyWith(color: foregroundColor);
+    Color? effectiveBackgroundColor = backgroundColor;
     if (effectiveBackgroundColor == null) {
-      switch (ThemeData.estimateBrightnessForColor(textStyle.color)) {
+      switch (ThemeData.estimateBrightnessForColor(textStyle.color!)) {
         case Brightness.dark:
           effectiveBackgroundColor = theme.primaryColorLight;
           break;
@@ -237,7 +237,7 @@ class Bubble extends StatelessWidget {
           break;
       }
     } else if (foregroundColor == null) {
-      switch (ThemeData.estimateBrightnessForColor(backgroundColor)) {
+      switch (ThemeData.estimateBrightnessForColor(backgroundColor!)) {
         case Brightness.dark:
           textStyle = textStyle.copyWith(color: theme.primaryColorLight);
           break;
@@ -249,7 +249,7 @@ class Bubble extends StatelessWidget {
 
     textStyle = textStyle.copyWith(fontSize: fontSize);
 
-    final double diameter = radius * 2;
+    final double diameter = radius! * 2;
     return Container(
       width: diameter,
       height: diameter,
@@ -262,7 +262,7 @@ class Bubble extends StatelessWidget {
           data: theme.iconTheme.copyWith(color: textStyle.color),
           child: DefaultTextStyle(
             style: textStyle,
-            child: child,
+            child: child!,
           ),
         ),
       ),
