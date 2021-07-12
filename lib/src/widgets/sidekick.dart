@@ -299,8 +299,9 @@ class _SidekickFlight {
       animation: _proxyAnimation,
       child: shuttle,
       builder: (BuildContext context, Widget? child) {
-        final RenderBox? toSidekickBox =
-            manifest!.toSidekick!.context.findRenderObject() as RenderBox?;
+        final RenderBox? toSidekickBox = manifest!.toSidekick!.mounted
+            ? manifest!.toSidekick!.context.findRenderObject() as RenderBox?
+            : null;
         if (_aborted || toSidekickBox == null || !toSidekickBox.attached) {
           // The toSidekick no longer exists or it's no longer the flight's destination.
           // Continue flying while fading out.
