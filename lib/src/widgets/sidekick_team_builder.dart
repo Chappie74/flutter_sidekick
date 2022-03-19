@@ -19,7 +19,7 @@ class _SidekickMission<T> {
 
   final String id;
   final T message;
-  final SidekickController? controller;
+  SidekickController? controller;
   bool inFlightToTheSource = false;
   bool inFlightToTheTarget = false;
   bool get inFlight => inFlightToTheSource || inFlightToTheTarget;
@@ -38,10 +38,8 @@ class _SidekickMission<T> {
   }
 
   void dispose() {
-    try {
+    if (controller != null) {
       controller?.dispose();
-    } catch (e) {
-      print(e);
     }
   }
 }
@@ -282,10 +280,8 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
 
   @override
   void dispose() {
-    try {
+    if (_sidekickController != null) {
       _sidekickController?.dispose();
-    } catch (e) {
-      print(e);
     }
     _sourceList!.forEach((mission) => mission.dispose());
     _targetList!.forEach((mission) => mission.dispose());
