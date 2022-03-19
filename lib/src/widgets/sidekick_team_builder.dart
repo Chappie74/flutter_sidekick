@@ -54,7 +54,7 @@ class SidekickTeamBuilder<T> extends StatefulWidget {
     this.initialSourceList,
     this.initialTargetList,
     this.animationDuration = const Duration(milliseconds: 300),
-  })  : super(key: key);
+  }) : super(key: key);
 
   /// The builder used to create the containers.
   final SidekickTeamWidgetBuilder<T> builder;
@@ -156,7 +156,9 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
           .move(
         context,
         direction,
-        tags: source.map((mission) => _getTag(mission as _SidekickMission<T?>)).toList(),
+        tags: source
+            .map((mission) => _getTag(mission as _SidekickMission<T?>))
+            .toList(),
       )
           .then((_) {
         setState(() {
@@ -230,7 +232,8 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
 
   _SidekickMission<T>? _getFirstMissionInList(
       List<_SidekickMission<T>> list, T message) {
-    return list.firstWhereOrNull((mission) => identical(mission.message, message));
+    return list
+        .firstWhereOrNull((mission) => identical(mission.message, message));
   }
 
   @override
@@ -323,6 +326,45 @@ class SidekickBuilderDelegate<T> {
         flightShuttleBuilder: flightShuttleBuilder,
         placeholderBuilder: placeholderBuilder,
         child: child,
+      ),
+    );
+  }
+
+  /// Builds the [Sidekick] widget wrapped with [Positioned] and its child.
+  /// Use this if you need to build positioned widget for use in stack list
+  Widget buildPositionedForStack(
+    BuildContext context,
+    Widget child, {
+    CreateRectTween? createRectTween,
+    SidekickFlightShuttleBuilder? flightShuttleBuilder,
+    TransitionBuilder? placeholderBuilder,
+    SidekickAnimationBuilder? animationBuilder,
+    required double top,
+    required double left,
+    required double bottom,
+    required double right,
+    double? width,
+    double? height,
+  }) {
+    return Positioned(
+      top: top,
+      left: left,
+      bottom: bottom,
+      right: right,
+      width: width,
+      height: height,
+      child: Opacity(
+        opacity: _getOpacity(),
+        child: Sidekick(
+          key: ObjectKey(_mission),
+          tag: _tag,
+          targetTag: _targetTag,
+          animationBuilder: animationBuilder,
+          createRectTween: createRectTween,
+          flightShuttleBuilder: flightShuttleBuilder,
+          placeholderBuilder: placeholderBuilder,
+          child: child,
+        ),
       ),
     );
   }
