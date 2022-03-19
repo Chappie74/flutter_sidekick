@@ -38,7 +38,9 @@ class _SidekickMission<T> {
   }
 
   void dispose() {
-    controller?.dispose();
+    if (controller != null) {
+      controller!.dispose();
+    }
   }
 }
 
@@ -278,7 +280,9 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
 
   @override
   void dispose() {
-    _sidekickController?.dispose();
+    if (_sidekickController != null) {
+      _sidekickController!.dispose();
+    }
     _sourceList!.forEach((mission) => mission.dispose());
     _targetList!.forEach((mission) => mission.dispose());
     super.dispose();
