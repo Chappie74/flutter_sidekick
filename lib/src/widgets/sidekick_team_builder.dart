@@ -40,7 +40,9 @@ class _SidekickMission<T> {
   void dispose() {
     try {
       controller?.dispose();
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
@@ -282,7 +284,9 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
   void dispose() {
     try {
       _sidekickController?.dispose();
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
     _sourceList!.forEach((mission) => mission.dispose());
     _targetList!.forEach((mission) => mission.dispose());
     super.dispose();
