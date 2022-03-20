@@ -28,3 +28,5 @@ example/android/app/\.classpath
 example/android/app/\.project
 
 example/android/app/\.settings/org\.eclipse\.buildship\.core\.prefs
+.fvm/flutter_sdk
+.fvm/fvm_config.json
