@@ -281,15 +281,15 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
     return '${_id}_$prefix${mission.id}';
   }
 
-  @override
-  void dispose() {
-    if (_sidekickController != null) {
-      _sidekickController?.dispose();
-    }
-    _sourceList!.forEach((mission) => mission.dispose());
-    _targetList!.forEach((mission) => mission.dispose());
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   if (_sidekickController != null) {
+  //     _sidekickController?.dispose();
+  //   }
+  //   _sourceList!.forEach((mission) => mission.dispose());
+  //   _targetList!.forEach((mission) => mission.dispose());
+  //   super.dispose();
+  // }
 }
 
 /// A delegate used to build a [Sidekick] and its child.

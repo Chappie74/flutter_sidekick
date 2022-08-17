@@ -473,35 +473,53 @@ class SidekickController extends Animation<double> {
     this.createRectTween,
     Duration duration = const Duration(milliseconds: 300),
     required TickerProvider vsync,
-  }) : _controller = AnimationController(
-          vsync: vsync,
-          duration: duration,
-        );
+  }) {
+    _controller = AnimationController(
+      vsync: vsync,
+      duration: duration,
+    );
+    _vsync = vsync;
+    _duration = duration;
+  }
 
   /// Used to create [RectTween]s that interpolate the position of sidekicks in flight.
   ///
   /// If null, the controller uses a linear [RectTween].
   final CreateRectTween? createRectTween;
-
+  late final TickerProvdider _vsync;
   AnimationController? _controller;
+  late final Duration _duration;
+
+  void refreshController() {
+    if (_controller == null) {
+      _controller = AnimationController(
+        vsync: _vsync,
+        duration: _duration,
+      );
+    }
+  }
 
   @override
   void addListener(VoidCallback listener) {
+    refreshController();
     _controller?.addListener(listener);
   }
 
   @override
   void removeListener(VoidCallback listener) {
+    refreshController();
     _controller?.removeListener(listener);
   }
 
   @override
   void addStatusListener(AnimationStatusListener listener) {
+    refreshController();
     _controller?.addStatusListener(listener);
   }
 
   @override
   void removeStatusListener(AnimationStatusListener listener) {
+    refreshController();
     _controller?.removeStatusListener(listener);
   }
 
@@ -546,6 +564,7 @@ class SidekickController extends Animation<double> {
     BuildContext context, {
     List<Object>? tags,
   }) {
+    refreshController();
     _controller?.reset();
     if (status == AnimationStatus.forward ||
         status == AnimationStatus.completed) {
@@ -566,6 +585,7 @@ class SidekickController extends Animation<double> {
     BuildContext context, {
     List<Object>? tags,
   }) {
+    refreshController();
     _controller?.value = 1.0;
     if (status == AnimationStatus.reverse ||
         status == AnimationStatus.dismissed) {
@@ -575,6 +595,7 @@ class SidekickController extends Animation<double> {
     WidgetsBinding.instance!.addPostFrameCallback((Duration value) {
       _startSidekickTransition(context, SidekickFlightDirection.toSource, tags);
     });
+
     return _controller!.reverse();
   }
 
