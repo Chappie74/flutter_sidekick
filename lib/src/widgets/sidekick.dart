@@ -486,7 +486,7 @@ class SidekickController extends Animation<double> {
   ///
   /// If null, the controller uses a linear [RectTween].
   final CreateRectTween? createRectTween;
-  late final TickerProvdider _vsync;
+  late final TickerProvider _vsync;
   AnimationController? _controller;
   late final Duration _duration;
 
