@@ -483,7 +483,7 @@ class SidekickController extends Animation<double> {
   /// If null, the controller uses a linear [RectTween].
   final CreateRectTween? createRectTween;
 
-  final AnimationController? _controller;
+  AnimationController? _controller;
 
   @override
   void addListener(VoidCallback listener) {
@@ -515,6 +515,7 @@ class SidekickController extends Animation<double> {
   @mustCallSuper
   void dispose() {
     _controller?.dispose();
+    _controller = null;
   }
 
   // All of the sidekicks that are currently in the overlay and in motion.
